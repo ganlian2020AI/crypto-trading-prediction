@@ -1,0 +1,209 @@
+# 加密货币交易系统配置文件
+
+# 数据相关配置
+data:
+  input_dir: "data/"                                   # 数据文件目录
+  symbols: ["AAVE", "ADA", "BCH", "BNB", "BTC", "DOGE", "ETH", "LTC", "SOL", "XRP"]  # 交易品种
+  timeframe: "30min"                                   # 时间框架
+  start_date: "2024-01-01"                             # 数据起始日期
+  end_date: "2024-12-31"                               # 数据结束日期
+  train_test_split: 0.8                                # 训练集比例
+  validation_split: 0.2                                # 验证集比例（从训练集中划分）
+  
+# 特征工程相关配置
+features:
+  # 传统技术指标
+  ema_periods: [21, 144, 169]                          # EMA周期
+  rsi_period: 14                                       # RSI计算周期
+  atr_period: 14                                       # ATR计算周期
+  hema_alpha_length: 20                                # HEMA alpha长度
+  hema_gamma_length: 20                                # HEMA gamma长度
+  
+  # 自定义指标
+  custom_indicator1_length: 576                        # 自定义指标1长度(predictedPrice)
+  custom_algorithm2_enabled: true                      # 是否启用自定义算法2
+  custom_algorithm3_enabled: true                      # 是否启用自定义算法3
+  
+  # 预处理参数
+  normalization: "z-score"                             # 标准化方法：z-score/min-max/robust
+  missing_value_method: "median"                       # 缺失值处理方法：median/interpolation/ffill/bfill
+  clip_outliers: true                                  # 是否裁剪异常值
+  outlier_threshold: 3.0                               # 异常值裁剪阈值（标准差的倍数）
+  
+# 模型相关配置
+model:
+  type: "lstm"                                         # 模型类型：lstm/gru/transformer
+  lookback_period: 48                                  # 回溯期（1天 = 48个半小时）
+  lstm_units: [64, 32]                                 # LSTM层神经元数量（减少复杂度）
+  dropout: 0.4                                         # Dropout比例（增加以减少过拟合）
+  recurrent_dropout: 0.3                               # 循环层Dropout比例（增加以减少过拟合）
+  batch_size: 32                                       # 批处理大小（减小以提高稳定性）
+  epochs: 200                                          # 训练轮数（增加以允许更长时间收敛）
+  early_stopping_patience: 25                          # 早停耐心值（增加以允许更长时间收敛）
+  learning_rate: 0.0005                                # 学习率（减小以提高稳定性）
+  optimizer: "adam"                                    # 优化器
+  l2_regularization: 0.001                             # L2正则化系数
+  l1_regularization: 0.001                             # L1正则化系数
+  gradient_clip_norm: 1.0                              # 梯度裁剪范数
+  gradient_clip_value: 0.5                             # 梯度裁剪值
+  
+# 标签生成相关配置
+labels:
+  forward_period: 15                                   # 预测未来15小时
+  label_type: "dynamic_atr"                            # 标签类型：fixed/dynamic_atr
+  atr_multiple: 0.8                                    # 动态阈值ATR倍数
+  fixed_threshold: 0.005                               # 固定阈值（如果使用）
+  
+# 资金管理相关配置
+capital_management:
+  base_capital: 10000.0                                # 基础资金量
+  risk_profile: "balanced"                             # 风险偏好：conservative/balanced/aggressive
+  max_risk_per_trade: 0.03                             # 单笔交易最大风险
+  position_sizing_method: "fibonacci"                  # 仓位大小方法：fixed/fibonacci/risk_parity
+  
+  # 斐波那契资金管理配置
+  fibonacci:
+    trending_allocation: 0.03                          # 顺势资金分配比例
+    normal_allocation: 0.02                            # 正常资金分配比例
+    counter_trend_allocation: 0.01                     # 逆势资金分配比例
+    extreme_allocation: 0.005                          # 极端逆势资金分配比例
+  
+  # 止损止盈配置
+  stop_loss:
+    method: "dynamic_atr"                              # 止损方法：fixed/dynamic_atr/fibonacci
+    fixed_percentage: 0.02                             # 固定止损百分比
+    atr_multiple: 2.0                                  # ATR倍数
+  
+  take_profit:
+    method: "risk_reward"                              # 止盈方法：fixed/risk_reward
+    fixed_percentage: 0.05                             # 固定止盈百分比
+    risk_reward_ratio: 2.0                             # 风险回报比
+  
+# 回测相关配置
+backtesting:
+  start_date: "2022-01-01"                             # 回测开始日期
+  end_date: "2023-12-31"                               # 回测结束日期
+  commission: 0.001                                    # 交易手续费
+  slippage: 0.0005                                     # 滑点
+  initial_capital: 10000.0                             # 初始资金
+  
+  # 评估指标
+  metrics:
+    accuracy_weight: 0.3                               # 准确率权重
+    f1_score_weight: 0.2                               # F1分数权重
+    return_weight: 0.3                                 # 收益率权重
+    drawdown_weight: 0.2                               # 回撤权重
+  
+# 交易相关配置
+trading:
+  mode: "paper"                                        # 交易模式：paper/live
+  update_frequency: "manual"                           # 更新频率：manual/daily/weekly/monthly
+  signal_threshold: 0.6                                # 信号阈值（概率）
+  webhook_url: "https://your-webhook-endpoint.com"     # Webhook URL
+  
+  # 币安API配置
+  binance:
+    api_key: "YOUR_API_KEY"                            # API密钥（请替换为实际值）
+    api_secret: "YOUR_API_SECRET"                      # API密钥（请替换为实际值）
+    testnet: true                                      # 是否使用测试网络
+  
+  # 通知配置
+  notifications:
+    enabled: true                                      # 是否启用通知
+    send_on_signal: true                               # 信号生成时发送
+    send_on_trade: true                                # 交易执行时发送
+    send_on_error: true                                # 错误发生时发送
+
+# 日志配置
+logging:
+  level: "INFO"                                        # 日志级别：DEBUG/INFO/WARNING/ERROR
+  file: "logs/trading_system.log"                      # 日志文件路径
+  max_file_size: 10485760                              # 最大日志文件大小（10MB）
+  backup_count: 5                                      # 备份文件数量 
+
+
+# 系统资源优化配置
+system_resources:
+  # CPU相关配置
+  cpu:
+    num_threads: 6                                     # 使用的CPU线程数：auto/具体数字
+    thread_affinity: false                             # 是否启用线程亲和性
+    priority: "normal"                                 # 进程优先级：low/normal/high
+  
+  # GPU相关配置
+  gpu:
+    enabled: false                                     # 是否启用GPU
+    device_ids: []                                     # 使用的GPU设备ID列表，如[0,1]表示使用两个GPU
+    memory_limit: 0.8                                  # GPU内存使用限制（占比），0.8表示使用80%
+    mixed_precision: true                              # 是否启用混合精度训练（FP16）
+    xla_acceleration: true                             # 是否启用XLA加速
+  
+  # 内存优化
+  memory:
+    limit_gb: 24.0                                     # 内存使用限制（GB）
+    data_loading_batch: 10000                          # 数据加载批次大小
+    prefetch_buffer_size: 5                            # 预取缓冲区大小（批次数）
+    cache_data_in_memory: true                         # 是否将处理后的数据缓存在内存中
+    garbage_collection_threshold: 0.8                  # 垃圾回收阈值（内存使用率）
+  
+  # 批处理优化
+  batch_processing:
+    auto_tune_batch_size: true                         # 是否自动调整批处理大小
+    max_batch_size: 128                                # 最大批处理大小
+    min_batch_size: 16                                 # 最小批处理大小
+    batch_size_tuning_steps: 5                         # 批处理大小调整步骤数
+  
+  # 并行处理
+  parallel_processing:
+    feature_engineering: true                          # 是否并行处理特征工程
+    data_preprocessing: true                           # 是否并行处理数据预处理
+    model_evaluation: true                             # 是否并行处理模型评估
+    max_workers: "auto"                                # 最大工作进程数：auto/具体数字
+
+# 数据库配置
+database:
+  # MySQL配置
+  mysql:
+    enabled: false
+    host: "localhost"
+    port: 3306
+    database: "crypto_data"
+    username: "root"
+    password: ""
+    table: "crypto_prices"
+  
+  # PostgreSQL配置
+  postgresql:
+    enabled: false
+    host: "localhost"
+    port: 5432
+    database: "crypto_data"
+    username: "postgres"
+    password: ""
+    table: "crypto_prices"
+  
+  # SQLite配置
+  sqlite:
+    enabled: false
+    path: "data/crypto.db"
+    table: "crypto_prices"
+  
+  # MongoDB配置
+  mongodb:
+    enabled: false
+    host: "localhost"
+    port: 27017
+    database: "crypto_data"
+    collection: "crypto_prices"
+    username: ""
+    password: ""
+    auth_source: "admin"
+
+  # 数据导出配置
+  export:
+    batch_size: 10000                                  # 每批导出的记录数
+    time_format: "%Y-%m-%d %H:%M:%S"                  # 时间戳格式
+    include_columns: ["timestamp", "open", "high", "low", "close", "volume"]  # 要导出的列
+    date_range:
+      start: "2020-01-01"                             # 导出数据的起始日期
+      end: "2024-12-31"                               # 导出数据的结束日期

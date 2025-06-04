@@ -1,0 +1,82 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 虚拟环境
+venv/
+ENV/
+env/
+
+# 日志和临时文件
+logs/
+*.log
+temp/
+tmp/
+.DS_Store
+
+# 模型文件（大文件）
+models/*.h5
+models/*.keras
+checkpoints/*.pkl
+checkpoints/
+
+# 处理后的数据（可以根据需要重新生成）
+processed_data/
+backtest_results/
+evaluation_plots/
+signals/
+plots/
+
+# IDE
+.idea/
+.cursor/
+.vscode/
+*.swp
+*.swo
+
+# 敏感信息
+trading_system/config/trading_config.yaml
+*.pem
+*.key
+*.env
+
+# 数据库文件
+*.db
+*.sqlite3
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# 测试覆盖报告
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini 

@@ -1,0 +1,168 @@
+# 交易系统配置文件
+
+# 基本配置
+general:
+  log_level: INFO
+  timezone: "Asia/Shanghai"
+  enable_alerts: true
+  alert_methods: ["console", "email"]  # 可选: console, email, telegram, sms
+  check_interval_minutes: 30  # 交易检查间隔(分钟)
+
+# 交易品种配置
+symbols:
+  - name: "BTC"
+    enabled: true
+    trade_size_usd: 100  # 每次交易金额(USD)
+    max_position: 3      # 最大持仓数量
+  - name: "ETH"
+    enabled: true
+    trade_size_usd: 100
+    max_position: 3
+  - name: "ADA"
+    enabled: true
+    trade_size_usd: 100
+    max_position: 3
+  - name: "BNB"
+    enabled: true
+    trade_size_usd: 100
+    max_position: 3
+  - name: "SOL"
+    enabled: true
+    trade_size_usd: 100
+    max_position: 3
+  - name: "XRP"
+    enabled: true
+    trade_size_usd: 100
+    max_position: 3
+  - name: "DOGE"
+    enabled: true
+    trade_size_usd: 100
+    max_position: 3
+  - name: "LTC"
+    enabled: false
+    trade_size_usd: 100
+    max_position: 3
+
+# 模拟交易配置
+simulation:
+  initial_capital: 10000  # 初始资金(USD)
+  start_date: "2023-01-01"  # 模拟开始日期
+  end_date: "auto"  # 设置为auto表示使用最新数据
+  include_fees: true
+  fee_rate: 0.001  # 0.1%交易费率
+  include_slippage: true
+  slippage_rate: 0.0005  # 0.05%滑点
+  data_source: "file"  # file或api
+  data_path: "data/"  # 如果data_source为file，指定数据文件路径
+
+# 实盘交易配置
+live_trading:
+  exchange: "binance"  # 交易所名称
+  api_key: ""  # API密钥
+  api_secret: ""  # API密钥
+  testnet: true  # 是否使用测试网络
+  initial_capital: 1000  # 初始资金(USD)
+  max_capital_per_trade_pct: 0.05  # 每笔交易最大资金比例
+  stop_loss_pct: 0.05  # 止损比例
+  take_profit_pct: 0.1  # 止盈比例
+  # API代理前缀URL（可选）
+  # 例如: https://你的域名/api/proxy/
+  api_proxy_prefix: ""
+  # 代理设置
+  proxy:
+    enabled: false
+    url: "http://127.0.0.1:7890"
+
+# 风险管理配置
+risk_management:
+  max_open_trades: 5  # 最大同时开仓数量
+  max_daily_trades: 10  # 每日最大交易次数
+  max_drawdown_pct: 0.1  # 最大回撤百分比，超过则停止交易
+  cooldown_minutes: 60  # 连续亏损后的冷却时间(分钟)
+
+# 报告配置
+reporting:
+  generate_trade_list: true  # 生成交易列表
+  generate_equity_curve: true  # 生成权益曲线
+  generate_performance_metrics: true  # 生成性能指标
+  report_format: ["csv", "html"]  # 报告格式
+  auto_export: true  # 自动导出报告
+  export_path: "reports/"  # 报告导出路径
+
+# 数据库配置
+database:
+  # 数据库类型: sqlite, mysql, mariadb, postgresql
+  type: "sqlite"
+  # SQLite配置
+  path: "data/trading_system.db"
+  # MySQL/MariaDB/PostgreSQL配置
+  host: "localhost"
+  port: 3306  # MySQL/MariaDB默认端口，PostgreSQL为5432
+  user: "root"
+  password: ""
+  database: "trading_system"
+  log_level: "INFO"
+
+# 数据下载配置
+data_download:
+  # 默认数据源
+  default_source: "binance"
+  # 默认时间间隔
+  default_interval: "1d"
+  # 默认开始日期
+  start_date: "2023-01-01"
+  # 默认结束日期（可选）
+  end_date: ""
+  # 是否保存到CSV
+  save_to_csv: true
+  # 是否保存到数据库
+  save_to_db: true
+  # 交易对白名单（如果为空，则允许所有未在黑名单中的交易对）
+  whitelist: []
+  # 交易对黑名单
+  blacklist: []
+  
+  # API代理前缀URL（可选）
+  # 例如: https://你的域名/api/proxy/
+  api_proxy_prefix: ""
+  
+  # 代理设置
+  proxy:
+    enabled: false
+    url: "http://127.0.0.1:7890"
+  
+  # 数据源配置
+  sources:
+    # 币安配置
+    binance:
+      enabled: true
+      # 币安不需要API密钥进行市场数据查询
+    
+    # Alpha Vantage配置
+    alphavantage:
+      enabled: false
+      api_key: ""
+
+# 警报配置
+alerts:
+  email:
+    enabled: false
+    smtp_server: "smtp.gmail.com"
+    smtp_port: 587
+    sender_email: "your-email@gmail.com"
+    receiver_email: "your-email@gmail.com"
+    username: "your-email@gmail.com"
+    password: ""
+  
+  telegram:
+    enabled: false
+    bot_token: ""
+    chat_id: ""
+  
+  alert_on:
+    trade_executed: true
+    position_closed: true
+    stop_loss_hit: true
+    take_profit_hit: true
+    error_occurred: true
+    drawdown_threshold: true 
